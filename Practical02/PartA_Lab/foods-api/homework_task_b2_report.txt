@@ -1,0 +1,32 @@
+app.use(express.json()):
+It makes every data being received into JSON format so that it can be processed by the API.
+
+req.body:
+It requests and processes data sent by user.
+
+req.query:
+It requests the query for the name of the food you want to be fileterd.
+
+req.params.id:
+It requests the ID of the current food in the dataset and will filter it out.
+
+Describe the significance of using different HTTP methods (e.g., GET, POST, PUT, DELETE) in your API. How do they relate to CRUD operations?
+
+The GET method retrieves data without modifying it, this relates back to the read function of CRUD. POST creates data in the server, this relates
+back to the create function of CRUD. PUT updates existing data which follows the update function. DELETE, deletes the existing data in the server
+which follows the delete function of CRUD.
+
+200 OK:
+The request was successful and the server has returned the requested data.
+
+201 Created: 
+The request was successful and a new resource has been created as a result.
+
+400 Bad Request: 
+The server cannot process the request due to client error.
+
+404 Not Found: 
+The server cannot find the requested resource at the specified URL.
+
+500 Internal Server Error: 
+The server encountered an unexpected condition that prevented it from fulfilling the request.
