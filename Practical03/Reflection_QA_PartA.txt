@@ -1,0 +1,3 @@
+I learned how to integrate a Node.js Express application with a Microsoft SQL Server database using the mssql package.
+I observed that placing all the database logic directly within route handlers makes the code harder to read 
+and understand as each route handler becomes lengthy and handles multiple validation simultaneously.
