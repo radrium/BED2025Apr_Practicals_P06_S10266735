@@ -133,3 +133,50 @@ app.post("/books", async (req, res) => {
     }
 });
 
+// --- PUT Route  ---
+
+// PUT update book by ID
+app.put("/books/:id", async (req, res) => {
+    const bookId = parseInt(req.params.id); // Get the book ID from the URL parameters
+    const updatedBookData = req.body; // Get the updated book data from the request body
+  
+    if (isNaN(bookId)) {
+      return res.status(400).send("Invalid book ID"); // Return 400 if the ID is not a number
+    }
+  
+    let connection;
+    try {
+      connection = await sql.connect(dbConfig); // Get the database connection
+      const sqlQuery = `UPDATE Books SET title = @title, author = @author WHERE id = @id`;
+      const request = connection.request();
+      // Bind parameters from the request body and URL parameter
+      request.input("title", updatedBookData.title);
+      request.input("author", updatedBookData.author);
+      request.input("id", bookId); // Bind the id parameter
+  
+      const result = await request.query(sqlQuery);
+  
+      if (result.rowsAffected[0] === 0) {
+        return res.status(404).send("Book not found"); // Return 404 if no rows were affected (book not found)
+      }
+      // Attempt to fetch the updated book to return it
+      const getUpdatedBookQuery = `SELECT id, title, author FROM Books WHERE id = @id`;
+      const getUpdatedBookRequest = connection.request();
+      getUpdatedBookRequest.input("id", bookId); // Bind the id parameter
+      const updatedBookResult = await getUpdatedBookRequest.query(getUpdatedBookQuery);
+
+      // Send the updated book data as JSON
+      res.status(200).json(updatedBookResult.recordset[0]); // Send 200 OK status and the updated book data
+    } catch (error) {
+      console.error(`Error in PUT /books/${bookId}:`, error);
+      res.status(500).send("Error updating book"); // Return 500 on error
+    } finally {
+      if (connection) {
+        try {
+          await connection.close(); // Close the database connection
+        } catch (closeError) {
+          console.error("Error closing database connection:", closeError);
+        }
+      }
+    }
+});
