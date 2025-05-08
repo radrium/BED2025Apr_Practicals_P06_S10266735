@@ -180,3 +180,39 @@ app.put("/books/:id", async (req, res) => {
       }
     }
 });
+
+// --- DELETE Route  ---
+// DELETE book by ID
+app.delete("/books/:id", async (req, res) => {
+    const bookId = parseInt(req.params.id); // Get the book ID from the URL parameters
+  
+    if (isNaN(bookId)) {
+      return res.status(400).send("Invalid book ID"); // Return 400 if the ID is not a number
+    }
+  
+    let connection;
+    try {
+      connection = await sql.connect(dbConfig); // Get the database connection
+      const sqlQuery = `DELETE FROM Books WHERE id = @id`;
+      const request = connection.request();
+      request.input("id", bookId); // Bind the id parameter
+  
+      const result = await request.query(sqlQuery);
+  
+      if (result.rowsAffected[0] === 0) {
+        return res.status(404).send("Book not found"); // Return 404 if no rows were affected (book not found)
+      }
+      res.status(204).send(); // Send 204 No Content status on successful deletion
+    } catch (error) {
+      console.error(`Error in DELETE /books/${bookId}:`, error);
+      res.status(500).send("Error deleting book"); // Return 500 on error
+    } finally {
+      if (connection) {
+        try {
+          await connection.close(); // Close the database connection
+        } catch (closeError) {
+          console.error("Error closing database connection:", closeError);
+        }
+      }
+    }
+});
