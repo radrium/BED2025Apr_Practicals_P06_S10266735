@@ -1,0 +1,32 @@
+Task 1
+One of the few changes to refactor the code is by clasifying each CRUD function and renaming it one by one for example
+the post function will be named as updateBook function
+and then it will be exported out through module.exports() so that it can be used in app.js since the functions are in a seperate folders.
+
+There were times where i forgot to export out the function even though i have finished it and there were times where i only completed the function in
+one of the folders like controllers but then i haven't pasted it into the models folder.
+
+The MVC structure is more forgiving as if i write all the functions in a single file, and one specific function fails, it doesn't crash the file itself
+as it provides fault isolation.
+
+The readability of code is much easier as in app.js there might be hundreds of lines of code but in MVC code is broken down to smaller files with
+specific names.
+
+Its easier to see where mistakes happen, for example if a user query fails I know there is an issue in Model, while if there is an issue while
+the controller handles data then there is an issue in Controller.
+
+Task 2
+Input validation middleware enhances API reliability and user-friendliness by acting as a quality control checkpoint for incoming data. 
+When implemented, this middleware intercepts all incoming requests before they reach your core application logic,
+ensuring that only properly formatted data proceeds further.
+For example, if your API expects a book's ISBN to follow the standard 13-digit format, 
+validation middleware would immediately reject submissions like "ISBN-12345" or empty values, 
+responding with a clear message like "ISBN must be exactly 13 digits."
+
+Parameterized queries prevent SQL injection attacks by fundamentally changing how data interacts with database queries.
+This approach is inherently more secure because it maintains a clear distinction between the SQL command structure
+and the variable data, effectively neutralizing injection attempts regardless of what characters the input contains.
+
+rather than telling a user attempting unauthorized access that "User ID 123 does not have permission to access the financial_records table" 
+which confirms both the existence of that user ID and the database table name, a secure API would respond with a generic "Access denied" message. 
+This practice helps prevent reconnaissance attacks where hackers gather information before attempting more targeted exploits.
