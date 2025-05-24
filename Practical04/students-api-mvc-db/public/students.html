@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Students</title>
+        <style>
+            body {
+                font-family: sans-serif;
+                margin: 20px;
+            }
+            #studentsList {
+                margin-top: 20px;
+            }
+            .student-item {
+                border: 1px solid #ccc;
+                padding: 10px;
+                margin-bottom: 10px;
+                border-radius: 5px;
+            }
+            .student-item h3 {
+                margin-top: 0;
+            }
+            .student-item button {
+                margin-right: 5px;
+            }
+            #message {
+                margin-top: 15px;
+                font-weight: bold;
+            } /* Style for the message div */
+        </style>
+    </head>
+    <body>
+        <h1>Students</h1>
+        <p><a href="create-student.html">Add New Student</a></p>
+        <button id="fetchStudentsBtn">Refresh Students List</button>
+        <div id="message"></div>
+        <div id="studentsList">Loading students...</div>
+        <script src="script.js"></script>
+    </body>
+</html>
