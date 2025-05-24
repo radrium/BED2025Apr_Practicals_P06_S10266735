@@ -116,7 +116,8 @@ async function deleteBook(id) {
     const query = "DELETE FROM Books WHERE id = @id";
     const request = connection.request();
     request.input("id", id);
-    await request.query(query);
+    const result = await request.query(query);
+    return result.rowsAffected[0];
   } catch (error) {
     console.error("Database error:", error);
     throw error;

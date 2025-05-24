@@ -70,12 +70,12 @@ async function deleteBook(req, res) {
       return res.status(400).json({ error: "Invalid book ID" });
     }
 
-    const deletedBook = await bookModel.deleteBook(id);
-    if (!deletedBook) {
+    const rowsDeleted = await bookModel.deleteBook(id);
+    if (rowsDeleted === 0) {
       return res.status(404).json({ error: "Book not found" });
     }
 
-    res.json({ message: "Book deleted successfully" });
+    res.status(200).json({ message: "Book deleted successfully" });
   } catch (error) {
     console.error("Controller error:", error);
     res.status(500).json({ error: "Error deleting book" });
