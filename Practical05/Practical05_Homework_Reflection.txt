@@ -1,0 +1,26 @@
+Separation of Concerns:
+
+In your own words, explain the distinct responsibilities of the Model, View (the external frontend), and Controller in your final project structure.
+Model basically handles all the logic regarding data, it connects to the database and run queries. It will then send data to the controller.
+View is what the user sees essentially the frontend. It displays the user interface, makes request to backend using javascript and does not handle any data storage directly.
+Controller handles logic routing and user request. It will get the right HTTP requests and then call the right model function to fetch or retrieve data. It seperates routing and business logic from database.
+
+How does having a separate frontend View (Practical 05) simplify the responsibilities of your backend API?
+
+Having a separate frontend View in Practical 05 allowed the backend API to focus purely on data logic and response handling. The API no longer had to worry about rendering HTML or managing the user interface.
+
+Robustness and Security:
+
+Consider the journey from a simple API (Practical 03) to a more robust one (Practical 04) and a full-stack application (Practical 05). At which stage do you think it became easier to identify and fix bugs related to data handling or API responses? Why?
+
+I think its easier to identify the bugs at full-stack as I am able to infer from the console in inspector mode on the website (which helps me identify them easier) and some bugs do not show up in postman.
+
+Challenges and Problem Solving:
+
+What was the most challenging aspect for you across Practical 03, 04, and 05? Describe the problem and how you approached solving it.
+
+One of the problems I faced was figuring out why I am still receiving the student ID as undefined while having displayed the correct id like 1,2. I solved it by looking at how I labelled my ids as instead of student.id which was the wrong one, the correct one is student.student_id which can be very hard to spot if i don't look close enough.
+
+Thinking critically, if you had to add a new feature (e.g., adding a "genre" field to books, or implementing user authentication), how would the current MVC structure with a separate View layer help you approach this task in a more organized and efficient way compared to the initial Practical 03 structure?
+
+In model i would add in a new logic to handle the new feature. For view i will update the interfact so there is a new form for the new input and adjust the javascript. In controller i will add in the routes needed to fetch the data.
