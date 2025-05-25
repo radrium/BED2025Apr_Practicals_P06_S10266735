@@ -1,0 +1,23 @@
+body {
+    font-family: sans-serif;
+    margin: 20px;
+}
+#studentsList {
+    margin-top: 20px;
+}
+.student-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+.student-item h3 {
+    margin-top: 0;
+}
+.student-item button {
+    margin-right: 5px;
+}
+#message {
+    margin-top: 15px;
+    font-weight: bold;
+}

@@ -39,14 +39,14 @@ async function fetchStudents() {
         const studentElement = document.createElement("div");
         studentElement.classList.add("student-item");
         // Use data attributes or similar to store ID on the element if needed later
-        studentElement.setAttribute("data-student-id", student.id);
+        studentElement.setAttribute("data-student-id", student.student_id);
         studentElement.innerHTML = `
                     <h3>${student.name}</h3>
-                    <p>Age: ${student.address}</p>
+                    <p>Address: ${student.address}</p>
                     <p>ID: ${student.student_id}</p>
-                    <button onclick="viewStudentDetails(${student.id})">View Details</button>
-                    <button onclick="editStudent(${student.id})">Edit</button>
-                    <button class="delete-btn" data-id="${student.id}">Delete</button>
+                    <button onclick="viewStudentDetails(${student.student_id})">View Details</button>
+                    <button onclick="editStudent(${student.student_id})">Edit</button>
+                    <button class="delete-btn" data-id="${student.student_id}">Delete</button>
                 `;
         studentListDiv.appendChild(studentElement);
       });
@@ -63,6 +63,7 @@ async function fetchStudents() {
 // Function to handle delete button click
 async function handleDeleteClick(event) {
   const studentId = event.target.getAttribute("data-id");
+  console.log("Delete student with ID:", studentId);
     try {
       const response = await fetch(`${apiBaseUrl}/students/${studentId}`, {
         method: "DELETE",
@@ -72,6 +73,8 @@ async function handleDeleteClick(event) {
       }
       // Refresh the list of students after deletion
       fetchStudents();
+      messageDiv.textContent = `Student with ID ${studentId} deleted successfully.`;
+      messageDiv.style.color = "green"; // Optional: Change message color to indicate success
     } catch (error) {
       console.error("Error deleting student:", error);
       messageDiv.textContent = `Failed to delete student: ${error.message}`;
