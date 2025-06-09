@@ -2,22 +2,27 @@ const express = require("express");
 const sql = require("mssql");
 const dotenv = require("dotenv");
 const path = require("path");
-const cors = require("cors");
+// const cors = require("cors");
 // Load environment variables
 dotenv.config();
 
 const bookController = require("./controllers/bookController");
+const userController = require("./controllers/userController");
 const {
   validateBook,
   validateBookId,
 } = require("./middlewares/bookValidation"); // import Book Validation Middleware
+const {
+  validateUser,
+  validateUserId,
+} = require("./middlewares/userValidation"); // import User Validation Middleware
 
 // Create Express app
 const app = express();
 const port = process.env.PORT || 3000;
 
 // Enable CORS for all routes
-app.use(cors());
+// app.use(cors());
 
 // Middleware (Parsing request bodies)
 app.use(express.json()); // Parse JSON request bodies
@@ -35,7 +40,14 @@ app.get("/books/:id", validateBookId, bookController.getBookById); // Use valida
 app.post("/books", validateBook, bookController.createBook); // Use validateBook middleware
 app.put("/books/:id", validateBookId, validateBook, bookController.updateBook); // Use validateBookId and validateBook middleware
 app.delete("/books/:id", validateBookId, bookController.deleteBook); // Use validateBookId middleware
-// Add routes for PUT/DELETE if implemented, applying appropriate middleware
+// Routes for users
+app.get("/users", userController.getAllUsers);
+app.get("/users/search", userController.searchUsers); // Search users by username or email
+app.get("/users/with-books", userController.getUsersWithBooks); // Get users with their books
+app.get("/users/:id", validateUserId, userController.getUserById); // Use validateUserId middleware
+app.post("/users", validateUser, userController.createUser); // Use validateUser middleware
+app.put("/users/:id", validateUserId, validateUser, userController.updateUser); // Use validateUserId and validateUser middleware
+app.delete("/users/:id", validateUserId, userController.deleteUser); // Use validateUserId middleware
 
 // Start server
 app.listen(port, () => {
