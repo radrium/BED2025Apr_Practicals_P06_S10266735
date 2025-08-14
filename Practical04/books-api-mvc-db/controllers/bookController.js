@@ -4,7 +4,7 @@ const bookModel = require("../models/bookModel");
 async function getAllBooks(req, res) {
   try {
     const books = await bookModel.getAllBooks();
-    res.json(books);
+    res.json(books);  
   } catch (error) {
     console.error("Controller error:", error);
     res.status(500).json({ error: "Error retrieving books" });

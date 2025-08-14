@@ -1,12 +1,14 @@
-const sql = require("mssql");
-const dbConfig = require("../dbConfig");
+const sql = require('mssql');
+const dbConfig = require('../dbConfig');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-// Get all books
+// Function to get all books
 async function getAllBooks() {
   let connection;
   try {
     connection = await sql.connect(dbConfig);
-    const query = "SELECT id, title, author FROM Books";
+    const query = "SELECT book_id, title, author, availability FROM Books";
     const result = await connection.request().query(query);
     return result.recordset;
   } catch (error) {
@@ -23,77 +25,16 @@ async function getAllBooks() {
   }
 }
 
-// Get book by ID
-async function getBookById(id) {
+// Update book availability
+async function updateBookAvailability(bookId, availability) {
   let connection;
   try {
     connection = await sql.connect(dbConfig);
-    const query = "SELECT id, title, author FROM Books WHERE id = @id";
+    const query = "UPDATE Books SET availability = @availability WHERE book_id = @book_id";
     const request = connection.request();
-    request.input("id", id);
-    const result = await request.query(query);
-
-    if (result.recordset.length === 0) {
-      return null; // Book not found
-    }
-
-    return result.recordset[0];
-  } catch (error) {
-    console.error("Database error:", error);
-    throw error;
-  } finally {
-    if (connection) {
-      try {
-        await connection.close();
-      } catch (err) {
-        console.error("Error closing connection:", err);
-      }
-    }
-  }
-}
-
-// Create new book
-async function createBook(bookData) { 
-  let connection;
-  try {
-    connection = await sql.connect(dbConfig);
-    const query =
-      "INSERT INTO Books (title, author) VALUES (@title, @author); SELECT SCOPE_IDENTITY() AS id;";
-    const request = connection.request();
-    request.input("title", bookData.title);
-    request.input("author", bookData.author);
-    const result = await request.query(query);
-
-    const newBookId = result.recordset[0].id;
-    return await getBookById(newBookId);
-  } catch (error) {
-    console.error("Database error:", error);
-    throw error;
-  } finally {
-    if (connection) {
-      try {
-        await connection.close();
-      } catch (err) {
-        console.error("Error closing connection:", err);
-      }
-    }
-  }
-}
-
-// Update book
-async function updateBook(id, bookData) {
-  let connection;
-  try {
-    connection = await sql.connect(dbConfig);
-    const query =
-      "UPDATE Books SET title = @title, author = @author WHERE id = @id";
-    const request = connection.request();
-    request.input("id", id);
-    request.input("title", bookData.title);
-    request.input("author", bookData.author);
+    request.input("book_id", sql.Int, bookId);
+    request.input("availability", sql.Char(1), availability);
     await request.query(query);
-
-    return await getBookById(id);
   } catch (error) {
     console.error("Database error:", error);
     throw error;
@@ -108,16 +49,76 @@ async function updateBook(id, bookData) {
   }
 }
 
-// Delete book
-async function deleteBook(id) {
+// User registration
+async function registerUser(userData) {
   let connection;
   try {
     connection = await sql.connect(dbConfig);
-    const query = "DELETE FROM Books WHERE id = @id";
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+    const query = "INSERT INTO Users (username, passwordHash, role) VALUES (@username, @passwordHash, @role)";
     const request = connection.request();
-    request.input("id", id);
+    request.input("username", sql.VarChar(255), userData.username);
+    request.input("passwordHash", sql.VarChar(255), hashedPassword);
+    request.input("role", sql.VarChar(20), userData.role);
+    await request.query(query);
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error;
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error("Error closing connection:", err);
+      }
+    }
+  }
+}
+
+// Get user by username
+async function getUserByUsername(username) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    const query = "SELECT * FROM Users WHERE username = @username";
+    const request = connection.request();
+    request.input("username", sql.VarChar(255), username);
     const result = await request.query(query);
-    return result.rowsAffected[0];
+    return result.recordset[0]; // Return the user object or null
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error;
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error("Error closing connection:", err);
+      }
+    }
+  }
+}
+
+async function login(username, password) {
+  let connection;
+  try {
+    connection = await sql.connect(dbConfig);
+    const user = await getUserByUsername(username);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    if (!isMatch) {
+      throw new Error("Invalid credentials");
+    }
+
+    // Generate JWT
+    const token = jwt.sign(
+      { id: user.user_id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '2h' }
+    );
+    return { token };
   } catch (error) {
     console.error("Database error:", error);
     throw error;
@@ -134,9 +135,8 @@ async function deleteBook(id) {
 
 module.exports = {
   getAllBooks,
-  getBookById,
-  createBook,
-  updateBook,
-  deleteBook,
-
+  updateBookAvailability,
+  registerUser,
+  login,
+  getUserByUsername
 };
