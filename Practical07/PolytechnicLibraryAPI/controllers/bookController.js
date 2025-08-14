@@ -5,10 +5,10 @@ async function getAllBooks(req, res) {
     try {
         const books = await bookModel.getAllBooks();
         res.json(books);
-    }
-    catch (error) {
+    } catch (error) {
         console.error("Controller error:", error);
-        res.status(500).json({ error: "Error retrieving books" });
+        // Use .send to match your Jest test
+        res.status(500).send("Error retrieving books");
     }
 }
 
@@ -22,8 +22,7 @@ async function updateBookAvailability(req, res) {
         }
         await bookModel.updateBookAvailability(bookId, availability);
         res.status(200).json({ message: "Book availability updated successfully" });
-    }
-    catch (error) {
+    } catch (error) {
         console.error("Controller error:", error);
         res.status(500).json({ error: "Error updating book availability" });
     }
@@ -41,7 +40,6 @@ async function registerUser(req, res) {
         const existingUser = await bookModel.getUserByUsername(username);
         if (existingUser) return res.status(400).json({ message: "Username already exists" });
 
-        // Call the model function
         await bookModel.registerUser({ username, password, role });
 
         res.status(201).json({ message: "User registered successfully" });
@@ -56,7 +54,7 @@ async function login(req, res) {
     try {
         const { username, password } = req.body;
         if (!username || !password) {
-            return res.status(400).json({ error: "Username and password are required" })
+            return res.status(400).json({ error: "Username and password are required" });
         }
         const loggedIn = await bookModel.login(username, password);
         if (!loggedIn) {

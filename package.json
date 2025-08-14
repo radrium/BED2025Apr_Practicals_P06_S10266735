@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "jest": "^30.0.5",
+    "mssql": "^11.0.1"
+  },
+  "scripts": {
+    "test": "jest"
+  }
+}
